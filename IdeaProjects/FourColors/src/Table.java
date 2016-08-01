@@ -3,7 +3,7 @@ import java.util.*;
 public class Table {
 
     public int M, N;
-    private int[][] cells, colors;
+    public int[][] cells, colors;
     public int partsNum = 1;
 
     public Table(int M, int N) {
