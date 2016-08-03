@@ -1,11 +1,17 @@
-public abstract class Bot {
+abstract class Bot {
 
-    public Table table;
+    final Table table;
+    final int[] score;
 
     public Bot(Table table) {
         this.table = table;
+        score = new int[]{0};
     }
 
-    public abstract int chooseMove();
+    public int getScore() {return score[0];}
+
+    public abstract void printScore();
+
+    public abstract int makeMove(int color);
 
 }

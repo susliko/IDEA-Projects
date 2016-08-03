@@ -1,0 +1,6 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="FourColors">
+    <output-path>$PROJECT_DIR$/out/artifacts/FourColors</output-path>
+    <root id="archive" name="FourColors.jar" />
+  </artifact>
+</component>

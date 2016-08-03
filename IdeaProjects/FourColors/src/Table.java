@@ -1,10 +1,24 @@
 import java.util.*;
 
-public class Table {
+class Table {
 
-    public int M, N;
-    public int[][] cells, colors;
-    public int partsNum = 1;
+    /*             Initialization of the Table
+    *******************************************************/
+
+    private final int M;
+    private final int N;
+    private int[][] cells, colors;
+    private int partsNum = 1;
+    public final Map<Integer, List<int[]>> freeFigures = new HashMap<>();
+
+    /*
+    41 red
+    42 green
+    43 yellow
+    44 blue
+    45 magenta
+    46 cyan */
+    private final String[] ASCIIcolors = new String[] {"[31m", "[32m", "[33m", "[34m", "[35m","[36m" };
 
     public Table(int M, int N) {
         this.M = M;
@@ -12,13 +26,16 @@ public class Table {
         initCells();
     }
 
+    /*             Functions for internal use
+    *******************************************************/
+
     private void initCells() {
         cells = new int[M][N];
         colors = new int[M][N];
         generateParts( (int) ((Math.sqrt(M) + 1) * (Math.sqrt(N) + 1)));
     }
 
-    void generateParts (int maxSize) {
+    private void generateParts(int maxSize) {
         if (maxSize > M * N) maxSize = M * N;
         Random random = new Random(System.currentTimeMillis());
         int m = 0, n = 0;
@@ -33,6 +50,9 @@ public class Table {
                     }
 
             cells[m][n] = partsNum;
+            List<int[]> list = new ArrayList<>();
+            list.add(new int[]{m,n});
+
             int currLength = random.nextInt(maxSize - 1) + 1;
 
             for (int i = 0; i < currLength; i++) {
@@ -57,16 +77,19 @@ public class Table {
 
                 if (m >= 0 & m < M & n >= 0 & n < N) {
                     cells[m][n] = partsNum;
+                    list.add(new int[]{m,n});
                 }
                 else break;
 
             }
+            freeFigures.put(partsNum, list);
+
             partsNum++;
         }
 
     }
 
-    boolean hasFreeCell() {
+    private boolean hasFreeCell() {
         for(int j = 0; j < N; j++)
             for (int i = 0; i < M; i++)
                 if (cells[i][j] == 0) {
@@ -74,6 +97,7 @@ public class Table {
                 }
         return false;
     }
+
 
     private int dirToMove(int i, int j, Random random) {
         Integer[] dirs = {0, 1, 2, 3};
@@ -89,32 +113,145 @@ public class Table {
         else return list.get(random.nextInt(list.size()));
     }
 
-    public void printsCells () {
-        for (int i = 0; i < M; i++){
-            System.out.print((i % 2 == 0) ? "" : " ");
-            for(int j = 0; j < N; j++) {
-                System.out.print( ((cells[i][j] < 10)? "0" : "") + cells[i][j] + " ");
+
+/**********************************************************************/
+
+private boolean isPossibleMove(int partToColor, int colorToUse) {
+
+        if (!freeFigures.containsKey(partToColor))
+            return false;
+        for (int[] cage : freeFigures.get(partToColor)) {
+            if (!mayColorTheCage(colorToUse, cage[0], cage[1]))
+                return false;
+        }
+        return true;
+    }
+
+    private boolean mayColorTheCage(int colorToUse, int i, int j) {
+        List<int[]> neibs = returnNeibs(i, j);
+
+        for (int[] neib : neibs) {
+            if (colors[neib[0]][neib[1]] == colorToUse)
+                return false;
+        }
+        return true;
+    }
+
+    private List<int[]> returnNeibs(int i, int j) {
+        List<int[]> list = new ArrayList<>();
+
+        for (int m = i - 1; m < i + 2; m++) {
+            for (int n = j - 1; n < j + 2; n++) {
+                if ((m < 0 || m > M - 1) || (n < 0 || n > N - 1) || (m == i && n == j) ||
+                        (i % 2 == 0 && m != i && n == j + 1) ||
+                        (i % 2 == 1 && m != i && n == j - 1))
+                    continue;
+                list.add(new int[]{m,n});
             }
-            System.out.println();
+        }
+        return list;
+    }
+
+    /*                  Functions for external use
+    *******************************************************************/
+
+// --Commented out by Inspection START (04.08.16 0:50):
+//    public void printsCells () {
+//        for (int i = 0; i < M; i++){
+//            System.out.print((i % 2 == 0) ? "" : " ");
+//            for(int j = 0; j < N; j++) {
+//
+//                String cell;
+//                if
+//               (cells[i][j] < 10){
+//                    cell = "0" + cells[i][j];
+//                }else {
+//                    cell = "" + cells[i][j];
+//                }
+//
+//                String s = (char)27 + ASCIIcolors[cells[i][j] % ASCIIcolors.length] + cell;
+//                System.out.print( s + " ");
+//            }
+//            System.out.println((char)27 + "[30m" + " ");
+//        }
+//    }
+// --Commented out by Inspection STOP (04.08.16 0:50)
+
+    public void printsCellsColored () {
+        for (int i = 0; i < M; i++) {
+            System.out.print((i % 2 == 0) ? "" : " ");
+            for (int j = 0; j < N; j++) {
+
+                String cell;
+                if
+                        (cells[i][j] < 10) {
+                    cell = "0" + cells[i][j];
+                } else {
+                    cell = "" + cells[i][j];
+                }
+
+                int col = colors[i][j];
+                String s;
+
+                if (col != 0) {
+                    s = (char) 27 + ASCIIcolors[colors[i][j] - 1] + cell;
+                }
+                else {
+                    s = cell;
+                }
+
+                System.out.print(s + (char) 27 + "[37m" + " ");
+            }
+            System.out.println((char) 27 + "[37m" + " ");
         }
     }
 
-    public void makeMove(int partToColor, int colorToUse) {
 
-        if (isPossibleMove(partToColor, colorToUse) && isPossibleColor(colorToUse)) {
+// --Commented out by Inspection START (04.08.16 0:50):
+//    public void printPossibleFigures(int colorToUse) {
+//        for (Map.Entry<Integer, List<int[]>> entry : PossibleFigures(colorToUse).entrySet()){
+//            System.out.print("Figure : " + entry.getKey() + " Cages : ");
+//            entry.getValue().forEach((X) -> System.out.print(Arrays.toString(X) + " "));
+//            System.out.println();
+//        }
+//    }
+// --Commented out by Inspection STOP (04.08.16 0:50)
+
+    public void printPossibleFiguresSh(int colorToUse) {
+         for (Map.Entry<Integer, List<int[]>> entry : PossibleFigures(colorToUse).entrySet()){
+             System.out.print(entry.getKey() + " ");
+         }
+        System.out.println();
+    }
+
+    public Map<Integer, List<int[]>> PossibleFigures (int colorToUse) {
+        Map<Integer, List<int[]>> possibleFigures = new HashMap<>(freeFigures);
+        freeFigures.keySet().stream().filter(key -> !isPossibleMove(key, colorToUse)).forEach(possibleFigures::remove);
+        return possibleFigures;
+    }
+
+    public boolean makeMove(int partToColor, int colorToUse, int[] turn) {
+
+        if (isPossibleMove(partToColor, colorToUse)) {
             for (int i = 0; i < M; i++)
                 for (int j = 0; j < N; j++){
                     if (cells[i][j] == partToColor) colors[i][j] = colorToUse;
                 }
+            turn[0] += freeFigures.get(partToColor).size();
+            freeFigures.remove(partToColor);
+
+//            LinkedList<Integer> freeFiguresKeys= new LinkedList<>(freeFigures.keySet());
+//            Iterator<Integer> it = freeFiguresKeys.iterator();
+//            while (it.hasNext()){
+//                Integer key = it.next();
+//                if (!isPossibleMove(key, colorToUse)) {
+//                    freeFigures.remove(key);
+//                    it.remove();
+//                }
+//            }
+            return true;
         }
-    }
-
-    private boolean isPossibleMove(int partToColor, int colorToUse) {
-        return true;
-    }
-
-    private boolean isPossibleColor(int colorToUse) {
-        return true;
+        return false;
     }
 
 }
