@@ -2,33 +2,37 @@ package sorts;
 
 public class MergeSort {
 
-    private static int[] hlpr;
+    private static int[] helper;
 
+    //Public function for external use
     public static void sort(int[] arr) {
-        hlpr = new int[arr.length];
+        helper = new int[arr.length]; // Сразу выделяем память для вспомогательного массива
         sort(arr,0, arr.length-1);
     }
 
-    private static void sort(int[] arr, int li, int ri) {
-        if (li >= ri) return;
+    //
+    private static void sort(int[] arr, int left, int right) {
+        if (left >= right) return;
 
-        int mid = li + (ri - li)/2;
-        sort(arr, li, mid);
-        sort(arr, mid + 1, ri);
+        int mid = left + (right - left)/2;
 
-        merge(arr, li, mid, ri);
+        sort(arr, left, mid);
+        sort(arr, mid + 1, right);
+
+        merge(arr, left, mid, right);
     }
 
-    private static void merge(int[] arr, int li, int mid, int ri) {
-        System.arraycopy(arr, 0, hlpr, 0, arr.length);
+    //Function to merge sorted parts of an array
+    private static void merge(int[] arr, int left, int mid, int right) {
+        System.arraycopy(arr, 0, helper, 0, arr.length);
 
-        int i = li, j = mid+1;
+        int i = left, j = mid+1;
 
-        for (int k = li; k <= ri; k++) {
-            if (i > mid) arr[k] = hlpr[j++];
-            else if (j > ri) arr[k] = hlpr[i++];
-            else if (hlpr[i] < hlpr[j]) arr[k] = hlpr[i++];
-            else arr[k] = hlpr[j++];
+        for (int k = left; k <= right; k++) {
+            if (i > mid) arr[k] = helper[j++];
+            else if (j > right) arr[k] = helper[i++];
+            else if (helper[i] < helper[j]) arr[k] = helper[i++];
+            else arr[k] = helper[j++];
         }
     }
 

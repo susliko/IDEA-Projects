@@ -1,10 +1,8 @@
-import sorts.BubbleSort;
 import sorts.HeapSort;
 import sorts.MergeSort;
 import sorts.QuickSort;
 
 import java.util.Arrays;
-import java.util.Map;
 import java.util.Random;
 
 public class sort {
@@ -31,17 +29,16 @@ public class sort {
 
     public static void main(String[] args) {
 
-        int[] arr1 = arrayGeneration(100,100);
+        int[] arr1 = arrayGeneration(1000000,100);
         int[] arr2 = Arrays.copyOf(arr1, arr1.length);
         int[] arr3 = Arrays.copyOf(arr1, arr1.length);
         int[] arr4 = Arrays.copyOf(arr1, arr1.length);
 
         System.out.println("Random array size : " + arr1.length + "\n");
 
-//        printArray(arr4);
-        Map.Entry
 
-        showTestResult("BubbleSort", Timer.measureTimeNanos(BubbleSort::sort, arr1));
+
+//        showTestResult("BubbleSort", Timer.measureTimeNanos(BubbleSort::sort, arr1));
 
         showTestResult("MergeSort ", Timer.measureTimeNanos(MergeSort::sort, arr2));
 

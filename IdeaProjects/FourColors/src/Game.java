@@ -52,14 +52,13 @@ public class Game {
     Game(Bot bot1,players firstPlayer, Table table) {
         this.table = table;
         this.bot1 = bot1;
-        whoseTurn = firstPlayer;
+        whoseTurn = firstPlayer                     ;
         color = 0;
     }
 
     void run(Scanner sc) {
         int[] humanScore = new int[]{0};
-        while (!table.PossibleFigures(color % 4 + 1).isEmpty()) {
-            color = color % 4 + 1;
+        while (!table.PossibleFigures(color = (color % 4 + 1)).isEmpty()) {
 
 
             /*      Useful outputs      */

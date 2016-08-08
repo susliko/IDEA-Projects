@@ -206,9 +206,19 @@ private boolean isPossibleMove(int partToColor, int colorToUse) {
         }
     }
 
+    public String cellsInStr () {
+        StringBuilder strb = new StringBuilder();
+        for (int i = 0; i < M; i++) {
+            for (int j = 0; j < N; j++)
+                strb.append(cells[i][j]).append(' ');
+            strb.append('\n');
+        }
+        return strb.toString();
+    }
+
 
 // --Commented out by Inspection START (04.08.16 0:50):
-//    public void printPossibleFigures(int colorToUse) {
+//    public void           printPossibleFigures(int colorToUse) {
 //        for (Map.Entry<Integer, List<int[]>> entry : PossibleFigures(colorToUse).entrySet()){
 //            System.out.print("Figure : " + entry.getKey() + " Cages : ");
 //            entry.getValue().forEach((X) -> System.out.print(Arrays.toString(X) + " "));
@@ -240,15 +250,6 @@ private boolean isPossibleMove(int partToColor, int colorToUse) {
             turn[0] += freeFigures.get(partToColor).size();
             freeFigures.remove(partToColor);
 
-//            LinkedList<Integer> freeFiguresKeys= new LinkedList<>(freeFigures.keySet());
-//            Iterator<Integer> it = freeFiguresKeys.iterator();
-//            while (it.hasNext()){
-//                Integer key = it.next();
-//                if (!isPossibleMove(key, colorToUse)) {
-//                    freeFigures.remove(key);
-//                    it.remove();
-//                }
-//            }
             return true;
         }
         return false;
