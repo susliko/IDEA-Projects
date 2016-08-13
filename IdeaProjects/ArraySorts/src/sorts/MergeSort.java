@@ -10,7 +10,6 @@ public class MergeSort {
         sort(arr,0, arr.length-1);
     }
 
-    //
     private static void sort(int[] arr, int left, int right) {
         if (left >= right) return;
 
